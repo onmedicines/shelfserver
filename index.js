@@ -82,3 +82,27 @@ app.post("/login", async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 });
+
+app.get("/user", authenticate, async (req, res) => {
+  try {
+    const { username } = req.payload;
+    if (!username) throw new Error("Cannot verify user");
+    const userData = await User.findOne({ username }, { password: 0 });
+    if (!userData) throw new Error("Could not fetch user data");
+    return res.status(200).json(userData);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+app.get("/books", authenticate, async (req, res) => {
+  try {
+    const { username } = req.payload;
+    if (!username) throw new Error("Cannot verify User");
+    const userBooks = await Book.find({ username });
+    if (!userBooks) throw new Error("Could not fetch books");
+    return res.status(200).json(userBooks);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
