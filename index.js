@@ -106,3 +106,16 @@ app.get("/books", authenticate, async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 });
+
+app.put("/books", authenticate, async (req, res) => {
+  try {
+    const { username } = req.payload;
+    if (!username) throw new Error("Cannot verify User");
+    const { name, pages, genre, author, rating, review } = req.body;
+    if (!name || !pages || !genre || !rating || !author) throw new Error("Details missising");
+    await Book.create({ username, name, pages, author, genre, rating, review });
+    return res.status(200).json({ message: "Book added successfully" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
