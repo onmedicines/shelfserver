@@ -75,7 +75,8 @@ app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
     const userExists = await User.findOne({ username });
-    if (!userExists && password !== userExists.password) throw new Error("Invalid username or password");
+    if (!userExists) throw new Error("Invalid username or password");
+    if (password !== userExists.password) throw new Error("Invalid username or password");
     const token = generateToken({ username });
     return res.status(200).json({ message: "User logged in successfully", token });
   } catch (error) {
