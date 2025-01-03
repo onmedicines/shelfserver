@@ -120,3 +120,17 @@ app.put("/books", authenticate, async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 });
+
+app.delete("/books", authenticate, async (req, res) => {
+  try {
+    const { username } = req.payload;
+    const { bookId } = req.body;
+    console.log(req.body);
+    if (!bookId) throw new Error("Book id not provided");
+    const result = await Book.deleteOne({ username, _id: bookId });
+    if (!result.acknowledged) throw new Error("Book could not be deleted");
+    return res.status(200).json({ message: "Book deleted" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
