@@ -134,3 +134,38 @@ app.delete("/books", authenticate, async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 });
+
+app.put("/update-book/:bookId", authenticate, async (req, res) => {
+  try {
+    let response;
+    const { username } = req.payload;
+    const { bookId } = req.params;
+    const { rating, review } = req.body;
+    if (!bookId) throw new Error("Invalid book id");
+    if (!rating && !review) throw new Error("Nothing to update");
+    if (rating && review) {
+      response = await Book.findOneAndUpdate({ username, _id: bookId }, { rating, review }, { new: true });
+    } else if (!rating && review) {
+      response = await Book.findOneAndUpdate({ username, _id: bookId }, { review }, { new: true });
+    } else if (rating && !review) {
+      response = await Book.findOneAndUpdate({ username, _id: bookId }, { rating }, { new: true });
+    }
+    if (!response) throw new Error("Could not update data");
+    return res.status(200).json({ message: "Updated info successfully" });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
+
+app.get("/one-book/:bookId", authenticate, async (req, res) => {
+  try {
+    const { username } = req.payload;
+    const { bookId } = req.params;
+    if (!bookId) throw new Error("Invalid book id");
+    const book = await Book.findOne({ _id: bookId });
+    if (!book) throw new Error("Book not found");
+    return res.status(200).json(book);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+});
