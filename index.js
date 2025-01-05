@@ -4,10 +4,6 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import path from "path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 dotenv.config();
 
 import { User } from "./schema/user.js";
@@ -58,10 +54,6 @@ const authenticate = (req, res, next) => {
 
 app.get("/", (req, res) => {
   res.send("<h1>Welcome to Book records</br>");
-});
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.post("/register", async (req, res) => {
